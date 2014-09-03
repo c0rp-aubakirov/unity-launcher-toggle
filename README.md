@@ -11,6 +11,14 @@ This script inspired by [this] (http://askubuntu.com/questions/519589/hide-the-u
 
 If you want to hide unity launcher while using some applications, and always show while using others this script is for you.
 
+## Requiremens
+
+Works on Ubuntu 14.04. Should also work on Ubuntu 12.10 or higher
+
+`xdotool` must be intstalled
+
+    $ sudo apt-get install xdotool 
+
 ## Installation
 
 [Download](https://github.com/c0rp-aubakirov/unity-launcher-toggle/archive/master.zip) or clone repository  to your home directory, in my case it is `/home/c0rp`.
