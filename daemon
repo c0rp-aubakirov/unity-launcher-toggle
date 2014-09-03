@@ -1,0 +1,89 @@
+#!/bin/bash
+#Get working directory. It is directory where this script is located
+# http://stackoverflow.com/questions/59895/can-a-bash-script-tell-what-directory-its-stored-in
+# Is a useful one-liner which will give you the full directory name
+# of the script no matter where it is being called from
+WORKING_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+PIDS=$WORKING_DIR/list_of_pids
+DAEMON_PID=$WORKING_DIR/daemon_pid
+
+run_daemon(){
+	while true; do
+		CURR_STATE=`gsettings get org.compiz.unityshell:/org/compiz/profiles/unity/plugins/unityshell/ launcher-hide-mode`
+		CURR_WIN_PID=`xdotool getwindowfocus getwindowpid`
+		if [ -f $PIDS ]; then
+			PID=$(grep $CURR_WIN_PID $PIDS)
+			if [ $? -eq 1 ]; then
+				if [ $CURR_STATE == 1 ]; then
+					gsettings set org.compiz.unityshell:/org/compiz/profiles/unity/plugins/unityshell/ launcher-hide-mode 0
+				fi
+			else
+				if [ $CURR_STATE == 0 ]; then
+					gsettings set org.compiz.unityshell:/org/compiz/profiles/unity/plugins/unityshell/ launcher-hide-mode 1
+				fi
+			fi
+		fi
+		sleep 1
+	done
+}
+
+check_if_daemon_alive(){
+	local PID=$1
+	if [ ! -z $PID ]; then 
+		if ps -p $PID > /dev/null; then
+			return 0
+		else
+			echo "Pid file is not empty, but process is died. Clear pid file"
+			>$DAEMON_PID
+			return 1
+		fi
+	else
+		return 1
+	fi
+}
+
+do_start() {
+	PID=`cat $DAEMON_PID`
+	if check_if_daemon_alive $PID; then
+		echo "daemon is already running"
+	else
+		run_daemon &
+		echo $! > $DAEMON_PID
+		echo "Daemon started"
+	fi
+}
+
+do_stop() {
+	PID=`cat $DAEMON_PID`
+	if check_if_daemon_alive $PID; then
+		kill -15 $PID
+		>$DAEMON_PID
+		echo "Daemon stopped"
+	fi
+}
+
+# create $PIDS file if it is not exists in current dir yet
+if [ ! -f $DAEMON_PID ]; then
+	touch $DAEMON_PID
+fi
+
+case "$1" in
+	start)
+		do_start
+		;;
+	stop)
+		do_stop
+		;;
+	status)
+		PID=`cat $DAEMON_PID`
+		if check_if_daemon_alive; then
+			echo "Daemon is running. Pid is $PID"
+		else
+			echo "Daemon is not runnning"
+		fi
+		;;
+	*)
+		echo "Usage: $SCRIPTNAME {start|stop|status}" >&2
+		exit 3
+		;;
+esac

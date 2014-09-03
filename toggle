@@ -1,0 +1,38 @@
+#!/bin/bash
+
+#Get working directory. It is directory where this script is located
+# http://stackoverflow.com/questions/59895/can-a-bash-script-tell-what-directory-its-stored-in
+# Is a useful one-liner which will give you the full directory name
+# of the script no matter where it is being called from
+WORKING_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+# get current focused window PID
+CURR_WIN_PID=`xdotool getwindowfocus getwindowpid`
+
+# init pids file path
+PIDS=$WORKING_DIR/list_of_pids
+
+# checking working dir is set
+if [ -z $WORKING_DIR ]; then
+	echo "You should set WORKING_DIR variable"
+	exit 0
+fi
+
+# create $PIDS file if it is not exists in current dir yet
+if [ ! -f $PIDS ]; then
+	touch $PIDS
+fi
+
+# searching current focused window pid in our pids file
+_=$(grep $CURR_WIN_PID $PIDS)
+if [ $? -eq 1 ]; then
+	# if there is no such PID, add PID to file and set launcher to auto-hide
+	echo $CURR_WIN_PID >> $PIDS
+	gsettings set org.compiz.unityshell:/org/compiz/profiles/unity/plugins/unityshell/ launcher-hide-mode 1
+else
+	# if there is such PID, remove PID from pids file and set launcher to show mode
+	gsettings set org.compiz.unityshell:/org/compiz/profiles/unity/plugins/unityshell/ launcher-hide-mode 0
+	sed -i "/$CURR_WIN_PID/d" $PIDS
+	echo "deleting pids"
+	cat $PIDS
+fi
