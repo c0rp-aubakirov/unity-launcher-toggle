@@ -4,14 +4,15 @@ unity-launcher-toggle
 
 Toggle unity launcher to auto-hide or always show depending on current focused window
 
-### Test On ubuntu 14.04. Should work for 12.10 and higher.
+### Tested on Ubuntu 14.04. Should work for 12.10 and higher.
 
 
-This script inspired by [this] (http://askubuntu.com/questions/519589/hide-the-unity-launcher-when-an-application-is-maximized) question
+This script is inspired by [this] (http://askubuntu.com/questions/519589/hide-the-unity-launcher-when-an-application-is-maximized) question.
 
-If you want to hide unity launcher while using some applications, and always show while using others this script is for you.
+If you want to hide the Unity Launcher while using some applications, and always show while using others this script is for you.
+You can still show the Launcher like you would when the launcher is set to Autohide.
 
-## Requiremens
+## Requirements
 
 Works on Ubuntu 14.04. Should also work on Ubuntu 12.10 or higher
 
@@ -21,7 +22,7 @@ Works on Ubuntu 14.04. Should also work on Ubuntu 12.10 or higher
 
 ## Installation
 
-[Download](https://github.com/c0rp-aubakirov/unity-launcher-toggle/archive/master.zip) or clone repository  to your home directory, in my case it is `/home/c0rp`.
+[Download](https://github.com/c0rp-aubakirov/unity-launcher-toggle/archive/master.zip) or clone this repository to your home directory, in my case it is `/home/c0rp`.
 
 Go to `System Settings / Keyboard / Shortcuts / Custom Shortcuts`.
 
